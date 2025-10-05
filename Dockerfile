@@ -1,18 +1,22 @@
 # Build stage
 FROM python:3.12 AS builder
 
-# install package
-RUN python -m pip install --upgrade pip && python -m pip install uv
+# install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
+# Change the working directory to the `app` directory
 WORKDIR /app
 
-# copy everything
-COPY . .
+COPY pyproject.toml ./
 
-#install dependencies
-RUN uv venv
-RUN uv pip install --requirements pyproject.toml --python /app/.venv
+# Install dependencies
+RUN uv sync --no-install-project --no-editable
 
+# Copy the project into the intermediate image
+COPY . /cc_simple_server ./
+
+# Sync the project
+RUN uv sync --no-editable
 #----------------------------
 # second stage
 FROM python:3.12-slim
