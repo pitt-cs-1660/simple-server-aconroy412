@@ -6,11 +6,12 @@ RUN python -m pip install --upgrade pip && python -m pip install uv
 
 WORKDIR /app
 
-# copy dependencies
+# copy everything
 COPY . .
 
 #install dependencies
-RUN uv sync
+RUN uv venv
+RUN uv pip install --requirements pyproject.toml --python /app/.venv
 
 #----------------------------
 # second stage
