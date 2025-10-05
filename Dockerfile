@@ -17,20 +17,20 @@ RUN uv pip install --requirements pyproject.toml --python /app/.venv
 # second stage
 FROM python:3.12-slim
 
-WORKDIR /app
-
 # copy from build
 COPY --from=builder /app/.venv /app/.venv
 ENV PATH="/app/.venv/bin:$PATH"
 
 
 # copy source code
-COPY . .
+COPY cc_simple_server ./cc_simple_server
+COPY tests ./tests
+
 
 #create user
 RUN useradd -m appuser
-RUN chown -R appuser:appuser /app
-USER appuser
+# RUN chown -R appuser:appuser /app
+# USER appuser
 
 #expose port
 EXPOSE 8000
