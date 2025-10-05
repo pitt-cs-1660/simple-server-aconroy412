@@ -7,11 +7,10 @@ RUN python -m pip install --upgrade pip && python -m pip install uv
 WORKDIR /app
 
 # copy dependencies
-COPY pyproject.toml .
+COPY . .
 
 #install dependencies
-RUN uv venv
-RUN uv pip install --requirements pyproject.toml --python /app/.venv
+RUN uv sync
 
 #----------------------------
 # second stage
@@ -23,8 +22,8 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 
 # copy source code
-COPY cc_simple_server ./cc_simple_server
-COPY tests ./tests
+COPY --from=builder /app/cc_simple_server ./cc_simple_server
+COPY --from=builder /app/tests ./tests
 
 
 #create user
